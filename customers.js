@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 var app = express();
 app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: false }))
 
 const options = {
     client: 'mysql',
@@ -15,6 +16,8 @@ const options = {
 let knex = require('knex')(options)
 
 app.post('/customers',(req,res) => {
+    // console.log(req.body.password)
+    // res.send(req.body.password)
     const con = {
         name: req.body.name,
         customer_id: req.body.customer_id,
@@ -29,7 +32,6 @@ app.post('/customers',(req,res) => {
         res.send(data);
     })
 });
-
 
 app.put('/customers',(req,res) => {
     const con = {
@@ -49,11 +51,20 @@ app.put('/customers',(req,res) => {
 });
 
 app.get("/getCustomers",(res,req) =>{
-knex.select("*").from("customer").then((data)=>{
-    req.json(data)
-    console.log("data get")
+    knex.select("*").from("customer").then((data)=>{
+        req.json(data)
+        console.log("data get")
+        })
     })
-})
-app.listen(8000,function(){
-    console.log("Started on PORT 8000");
+
+// app.post("/login",(res,req) => {
+//     var pass = req.body.password;
+//     knex.select("*").from("customer").havingIn("customer.password",pass).then((logindata) => {
+//         console.log(res.send(logindata))
+//     })
+// });
+
+app.listen(8010,function(){
+    console.log("Started on PORT 8010");
 });
+
