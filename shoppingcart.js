@@ -97,6 +97,7 @@ app.get('/totalAmount/:cart_id',(req,res)=>{
 //         database: 'Turing'
 //     }
 // })
+
 // knex.schema.createTable('saveForLater', (table) => {
 //     table.integer('item_id')
 //     table.integer('cart_id')
@@ -107,29 +108,79 @@ app.get('/totalAmount/:cart_id',(req,res)=>{
 //     table.integer('added_on')
 //   }).then(() => console.log("table created"))
 //       .catch((err) => { console.log(err); throw err })
-    
-// app.get("/saveForLater/:item_id",(res,req)=>{
-//     knex("shopping_cart")
-//     .select("item_id","cart_id","product_id","attributes","quantity")
-//     .where('shopping_cart.item_id',req.params.item_id)
-//     .then((data)=>{
-//         console.log(data)
-    
-//     })
-// })
+
+// knex.schema.createTable('getSaved', (table) => {
+//         table.integer('item_id')
+//         table.integer('cart_id')
+//         table.integer('product_id')
+//         table.string('attributes')
+//         table.integer('quantity')
+//         table.integer('buy_now')
+//         table.integer('added_on')
+//         }).then(() => console.log("table created"))
+//             .catch((err) => { console.log(err); throw err })
+
 
 app.get('/saveForLater/:item_id',(req,res) => {
     let item_ID = req.params.item_id
     knex('shopping_cart').where("item_id",item_ID).then((data1) => {
-        res.send(data1)
-        // knex('saveForLater')
-        // .insert(data1[0])
-        // .then((data1)=>{
-        //     res.send(data1)
-        //     console.log("data inserted ")
-        // })
+        // res.send(data1[0])
+        // console.log(data1[0]['item_id'])
+        knex('saveForLater')
+        .insert({
+            "item_id" : data1[0]['item_id'],
+            "cart_id" : data1[0]['cart_id'],
+            "product_id" : data1[0]['product_id'],
+            "attributes" : data1[0]['attributes'],
+            "quantity" : data1[0]['quantity']
+        })
+        .then((data1)=>{
+            res.send(data1)
+            console.log("data inserted ")
+            knex('shopping_cart')
+            .where('shopping_cart.item_id',req.params.item_id)
+            .del().then((data1)=>{
+                console.log("data deleted")
+            })
+        })
     })
 })
-app.listen(3311,function(){
-    console.log("Started on PORT 3330");
+
+app.post('/shopping_getSaved',(req,res) => {
+    const con = {
+        item_id : req.body.item_id,
+        cart_id : req.body.cart_id,
+        product_id : req.body.product_id,
+        attributes : req.body.attributes,
+        quantity : req.body.quantity
+        // added_on : new Date()
+    };
+    knex('getSaved').insert(con).then((data) => {
+        console.log("data inserted");
+        res.send(data);
+    })
+})
+
+app.get('/shoppingcart_getSaved/:cart_id', (req,res) => {
+    let cart_id = req.params.cart_id
+    knex('getSaved')
+    .join('product','getSaved.cart_id','=', 'product.product_id')
+    .select('product.name','getSaved.item_id','attributes','price')
+    .where('cart_id',cart_id).then((data) => {
+        res.send(data)
+    }).catch((err)=>{
+        res.send(err)
+    })
+});
+
+app.delete('/shoppingcart/removeProduct/:item_id',(req,res) => {
+    let item_id = req.params.item_id
+    knex('shopping_cart')
+    .where("item_id",item_id)
+    .del().then(() => { 
+        res.send("deleted data id waise")
+    })
+});
+app.listen(5001,function(){
+    console.log("Started on PORT 5000");
 });
