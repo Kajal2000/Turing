@@ -57,14 +57,23 @@ app.get("/getCustomers",(res,req) =>{
         })
     })
 
-// app.post("/login",(res,req) => {
-//     var pass = req.body.password;
-//     knex.select("*").from("customer").havingIn("customer.password",pass).then((logindata) => {
-//         console.log(res.send(logindata))
-//     })
-// });
-
-app.listen(8010,function(){
+app.post("/login",(req,res) => {
+    var pass = req.body.password;
+    var eml = req.body.email;
+    knex.select("*").from("customer").havingIn("customer.email",eml).then((logindata) => {
+        if (logindata. length == 0){
+        // if (logindata.length== 0)
+            res.send("wrong h")
+        }else{
+            (logindata['email'] == eml)
+            knex.select("*").from("customer").havingIn("customer.password",pass).then((logindata) => {
+            (logindata['password'] == pass)
+                res.send('email is right')
+                res.send('password is right')
+            })
+        }
+    })
+});
+app.listen(8000,function(){
     console.log("Started on PORT 8010");
 });
-

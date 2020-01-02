@@ -13,6 +13,7 @@ const options = {
 }
 let knex = require('knex')(options)
 
+
 app.get('/api',(res,req) => {
     knex.select("*").from('category').then((data)=>{
         req.json(data)

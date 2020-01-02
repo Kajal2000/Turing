@@ -13,7 +13,21 @@ const options = {
     }
 }
 let knex = require('knex')(options)
+var randomString = require('random-string');
+var UniqueId = randomString();
 
+// 1)
+
+app.get('/shoppingcart/generateUniqueId',(req,res)=>{
+    var UniqueId_Data = {
+        cart_id : UniqueId
+    }
+    res.send(UniqueId_Data)
+    console.log("UniqueId created")
+})
+
+
+// 2) 
 app.post('/shopping',(req,res) => {
     const con = {
         item_id : req.body.item_id,
@@ -28,7 +42,7 @@ app.post('/shopping',(req,res) => {
         res.send(data);
     })
 })
-
+// 3)
 app.get('/shopping_cart/:cart_id',(req,res) => {
     let cart_ID = req.params.cart_id
     knex('shopping_cart').where("cart_id",cart_ID).then((data1) => {
@@ -36,6 +50,7 @@ app.get('/shopping_cart/:cart_id',(req,res) => {
         console.log("code is working")
     })
 })
+// 4)
 
 app.put('/shopping_cart/:item_id',(req,res)=>{
     let item_ID = req.params.item_id
@@ -58,6 +73,7 @@ app.put('/shopping_cart/:item_id',(req,res)=>{
     })
 })
 
+// 5)
 app.delete('/empty',(req,res) => {
     var db_data = {
         item_id  : req.body.item_id,
@@ -74,6 +90,19 @@ app.delete('/empty',(req,res) => {
     })
 })
 
+// 6)
+
+app.delete('/moveToCart/:item_id',(res,req)=>{
+    let item_ID = res.params.item_id
+    knex('saveForLater')
+    .where("item_id",item_ID)
+    .del().then(() => { 
+        res.send("deleted data id waise")
+    })
+
+})
+
+// 7)
 app.get('/totalAmount/:cart_id',(req,res)=>{
     let cart_ID = req.params.cart_id
     knex("shopping_cart")
@@ -121,6 +150,8 @@ app.get('/totalAmount/:cart_id',(req,res)=>{
 //             .catch((err) => { console.log(err); throw err })
 
 
+// 8)
+
 app.get('/saveForLater/:item_id',(req,res) => {
     let item_ID = req.params.item_id
     knex('shopping_cart').where("item_id",item_ID).then((data1) => {
@@ -146,6 +177,7 @@ app.get('/saveForLater/:item_id',(req,res) => {
     })
 })
 
+// 9)
 app.post('/shopping_getSaved',(req,res) => {
     const con = {
         item_id : req.body.item_id,
@@ -161,6 +193,8 @@ app.post('/shopping_getSaved',(req,res) => {
     })
 })
 
+// 9)
+
 app.get('/shoppingcart_getSaved/:cart_id', (req,res) => {
     let cart_id = req.params.cart_id
     knex('getSaved')
@@ -173,6 +207,7 @@ app.get('/shoppingcart_getSaved/:cart_id', (req,res) => {
     })
 });
 
+// 10)
 app.delete('/shoppingcart/removeProduct/:item_id',(req,res) => {
     let item_id = req.params.item_id
     knex('shopping_cart')
@@ -181,6 +216,6 @@ app.delete('/shoppingcart/removeProduct/:item_id',(req,res) => {
         res.send("deleted data id waise")
     })
 });
-app.listen(5001,function(){
+app.listen(4000,function(){
     console.log("Started on PORT 5000");
 });
