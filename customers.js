@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 var app = express();
 app.use(bodyParser.json())
-// app.use(bodyParser.urlencoded({ extended: false }))
+const jwt = require('jsonwebtoken')
 
 const options = {
     client: 'mysql',
@@ -16,8 +16,6 @@ const options = {
 let knex = require('knex')(options)
 
 app.post('/customers',(req,res) => {
-    // console.log(req.body.password)
-    // res.send(req.body.password)
     const con = {
         name: req.body.name,
         customer_id: req.body.customer_id,
@@ -61,19 +59,46 @@ app.post("/login",(req,res) => {
     var pass = req.body.password;
     var eml = req.body.email;
     knex.select("*").from("customer").havingIn("customer.email",eml).then((logindata) => {
-        if (logindata. length == 0){
-        // if (logindata.length== 0)
-            res.send("wrong h")
+        if (logindata.length == 0){
+            res.send("wrong h email")
         }else{
-            (logindata['email'] == eml)
             knex.select("*").from("customer").havingIn("customer.password",pass).then((logindata) => {
-            (logindata['password'] == pass)
-                res.send('email is right')
-                res.send('password is right')
+                if (logindata.length == 0){
+                    res.send("Wrong h password")
+                }else{
+                    let newToken = jwt.sign({ "costomer" : logindata }, "kajal")
+                        console.log(newToken)
+                        res.send('loing successsful')
+                }
             })
         }
     })
 });
+
+app.put('/customers/address',(req,res)=>{
+    con = {
+        customer_id : req.body.customer_id,
+        address_2 : req.body.address_2
+    }
+    knex('customer').where({customer_id:req.body.customer_id})
+    .update(con).then((data) => {
+        console.log("data inserted");
+        res.send(data);
+    })
+})
+
+app.put('/customers/creditCard',(req,res)=>{
+    store_data = {
+        credit_card : req.body.credit_card,
+        country : req.body.country,
+        // name : req.body.name
+    }
+    knex('customer').where({customer_id:req.body.customer_id})
+    .update(store_data).then((data)=>{
+        console.log("data inserted")
+        res.send(data)
+    })
+})
 app.listen(8000,function(){
     console.log("Started on PORT 8010");
 });
