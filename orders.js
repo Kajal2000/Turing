@@ -14,5 +14,14 @@ const options = {
 let knex = require('knex')(options)
 
 app.post('/orders',(req,res)=>{
-    
+    token = req.header
+    jwt.verrify(token, "kajal",(err,data)=>{
+        if(!err){
+
+        }
+        else{
+            res.send()
+        }
+    })
+
 })

@@ -73,19 +73,6 @@ app.get("/product/:product_id",(res,req) =>{
     })
 })
 
-// app.post("/product_review/:product_id",(res,req) =>{
-//     let product_ID = res.params.product_id
-//     knex("product_category")
-//     .join("category","product_category.category_id","=", "category.category_id")
-//     .join("department","category.department_id", "=", "department.department_id")
-//     .select("department.department_id","department.name as name", "category.category_id","category.name as name_1")
-//     .where("product_id",product_ID).then((data)=>{
-//         req.send(data)
-//         console.log("your is Working :)")
-//     })
-// })
-
-
 app.get("/product_search/:search",(res,req)=>{
     let name_search = res.params.search
     knex("product").where('product_id', 'like', name_search).then((connect)=>{

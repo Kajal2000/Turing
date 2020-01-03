@@ -68,6 +68,7 @@ app.post("/login",(req,res) => {
                 }else{
                     let newToken = jwt.sign({ "costomer" : logindata }, "kajal")
                         console.log(newToken)
+                        res.cookie(newToken)
                         res.send('loing successsful')
                 }
             })
@@ -87,18 +88,18 @@ app.put('/customers/address',(req,res)=>{
     })
 })
 
-app.put('/customers/creditCard',(req,res)=>{
-    store_data = {
-        credit_card : req.body.credit_card,
-        country : req.body.country,
-        // name : req.body.name
-    }
-    knex('customer').where({customer_id:req.body.customer_id})
-    .update(store_data).then((data)=>{
-        console.log("data inserted")
-        res.send(data)
-    })
-})
+// app.put('/customers/creditCard',(req,res)=>{
+//     store_data = {
+//         credit_card : req.body.credit_card,
+//         country : req.body.country,
+//         // name : req.body.name
+//     }
+//     knex('customer').where({customer_id:req.body.customer_id})
+//     .update(store_data).then((data)=>{
+//         console.log("data inserted")
+//         res.send(data)
+//     })
+// })
 app.listen(8000,function(){
     console.log("Started on PORT 8010");
 });
